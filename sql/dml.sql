@@ -289,3 +289,20 @@ FROM pedido p
 GROUP BY p.estado
 ORDER BY numero DESC;
 
+--5--
+SELECT precio1.max , precio2.min 
+FROM (SELECT MAX(P.precio_venta) AS max
+FROM producto p
+)precio1,(
+    SELECT MIN(P.precio_venta) AS min
+    FROM producto p
+)precio2;
+
+--6--
+SELECT COUNT(*)
+FROM cliente c;
+
+--7--
+SELECT COUNT(*)
+FROM cliente c
+WHERE c.ciudad = "Madrid";
