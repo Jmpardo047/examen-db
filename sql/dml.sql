@@ -141,7 +141,11 @@ INNER JOIN cliente c ON c.codigo_cliente = p.codigo_cliente
 INNER JOIN empleado e ON e.codigo_empleado = c.codigo_empleado_rep_ventas;
 
 --3--
-
+SELECT c.codigo_cliente, c.nombre_cliente, e.nombre
+FROM cliente c
+LEFT JOIN pago p ON p.codigo_cliente = c.codigo_cliente
+INNER JOIN empleado e ON e.codigo_empleado = c.codigo_empleado_rep_ventas
+WHERE p.codigo_cliente IS NULL;
 
 --4--
 SELECT c.codigo_cliente, c.nombre_cliente, e.nombre AS nombre_representante, o.ciudad AS ciudad_oficina
@@ -280,7 +284,8 @@ FROM pago p
 WHERE p.fecha_pago LIKE "%2009%";
 
 --4--
-SELECT p.estado, 
+SELECT p.estado, COUNT(*) AS numero
 FROM pedido p
 GROUP BY p.estado
-ORDER BY 
+ORDER BY numero DESC;
+
