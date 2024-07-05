@@ -1,7 +1,7 @@
 --INSERTS
 INSERT INTO gama_producto (gama, descripcion_texto, descripcion_html, imagen) VALUES 
-('Gama1', 'Descripción de la gama 1', '<p>Descripción de la gama 1</p>', 'imagen1.jpg'),
-('Gama2', 'Descripción de la gama 2', '<p>Descripción de la gama 2</p>', 'imagen2.jpg');
+('Gama1', 'Descripción de la gama 1', 'Descripción de la gama 1', 'imagen1.jpg'),
+('Gama2', 'Descripción de la gama 2', 'Descripción de la gama 2', 'imagen2.jpg');
 
 INSERT INTO oficina (codigo_oficina, ciudad, pais, region, codigo_postal, telefono, linea_direccion1, linea_direccion2) VALUES 
 ('OF1', 'Madrid', 'España', 'Europa', '28001', '123456789', 'Calle Falsa 123', ''),
