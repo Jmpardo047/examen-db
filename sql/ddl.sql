@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS empleado (
     apellido1 VARCHAR(50),
     apellido2 VARCHAR(50),
     extension VARCHAR(10),
-    email VARCHAR(10),
+    email VARCHAR(100),
     codigo_oficina VARCHAR(10),
     codigo_jefe INT(11),
     puesto VARCHAR(50),
