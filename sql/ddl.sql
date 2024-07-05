@@ -68,7 +68,3 @@ CREATE TABLE IF NOT EXISTS cliente (
     CONSTRAINT pk_id_cod_cliente  PRIMARY KEY (codigo_cliente)
     CONSTRAINT fk_id_cliente_cod_empleado FOREIGN KEY codigo_empleado_rep_ventas REFERENCES empleado(codigo_empleado);
 )
-
-
-
-CREATE TABLE IF NOT EXISTS detalle_pedido
