@@ -37,6 +37,7 @@ INSERT INTO detalle_pedido (codigo_pedido, codigo_producto, cantidad, precio_uni
 (1, 'P002', 1, 20.00, 2),
 (2, 'P001', 5, 10.00, 1);
 
+---------------------------------------
 
 SELECT o.codigo_oficina, o.ciudad
 FROM oficina o;
