@@ -13,13 +13,15 @@ INSERT INTO producto (codigo_producto, nombre, gama, dimensiones, proveedor, des
 
 
 INSERT INTO empleado (codigo_empleado, nombre, apellido1, apellido2, extension, email, codigo_oficina, codigo_jefe, puesto) VALUES 
-(3, 'Juan', 'Pérez', 'García', '101', 'juan.perez@example.com', 'OF1', NULL, 'jefe'),
-(4, 'Ana', 'López', 'Martínez', '102', 'ana.lopez@example.com', 'OF2', 7, 'Subgerente');
+(3, 'Juan', 'Pérez', 'García', '101', 'juan.perez@example.com', 'OF1', NULL, 'jefe')
+(4, 'Ana', 'López', 'Martínez', '102', 'ana.lopez@example.com', 'OF2', 7, 'Subgerente')
+(6, 'jjj', 'López', 'Martínez', '102', 'ana.lopez@example.com', 'OF2', 6, 'jefejefe');
 
 
 INSERT INTO cliente (codigo_cliente, nombre_cliente, nombre_contacto, apellido_contacto, telefono, fax, linea_direccion1, linea_direccion2, ciudad, region, pais, codigo_postal, codigo_empleado_rep_ventas, limite_credito) VALUES 
 (1, 'Cliente 1', 'Carlos', 'Sánchez', '123456789', '987654321', 'Calle Falsa 123', '', 'Madrid', 'Europa', 'España', '28001', 3, 10000.00),
 (2, 'Cliente 2', 'María', 'Gómez', '987654321', '123456789', 'Avenida Siempre Viva 456', '', 'Barcelona', 'Europa', 'España', '08001', 4, 20000.00);
+(5, 'Cliente 2', 'María', 'Gómez', '987654321', '123456789', 'Avenida Siempre Viva 456', '', 'Barcelona', 'Europa', 'España', '08001', 20000.00);
 
 
 INSERT INTO pago (codigo_cliente, forma_pago, id_transaccion, fecha_pago, total) VALUES 
@@ -127,5 +129,158 @@ INNER JOIN empleado e ON e.codigo_empleado = c.codigo_empleado_rep_ventas
 WHERE ciudad = "Madrid" AND e.codigo_empleado IN (11,30);
 
 -----MULTITABLA-------
+--1--
+SELECT c.nombre_cliente, e.nombre, e.apellido1, e.apellido2
+FROM cliente c
+INNER JOIN empleado e ON e.codigo_empleado = c.codigo_cliente;
+
+--2--
+SELECT c.nombre_cliente, e.nombre
+FROM pago p
+INNER JOIN cliente c ON c.codigo_cliente = p.codigo_cliente
+INNER JOIN empleado e ON e.codigo_empleado = c.codigo_empleado_rep_ventas;
+
+--3--
+
+
+--4--
+SELECT c.codigo_cliente, c.nombre_cliente, e.nombre AS nombre_representante, o.ciudad AS ciudad_oficina
+FROM cliente c
+LEFT JOIN pago p ON p.codigo_cliente = c.codigo_cliente
+INNER JOIN empleado e ON e.codigo_empleado = c.codigo_empleado_rep_ventas
+INNER JOIN oficina o ON o.codigo_oficina = e.codigo_oficina
+WHERE p.codigo_cliente IS NOT NULL;
+
+--5--
+SELECT c.codigo_cliente, c.nombre_cliente, e.nombre AS nombre_representante, o.ciudad AS ciudad_oficina
+FROM cliente c
+LEFT JOIN pago p ON p.codigo_cliente = c.codigo_cliente
+INNER JOIN empleado e ON e.codigo_empleado = c.codigo_empleado_rep_ventas
+INNER JOIN oficina o ON o.codigo_oficina = e.codigo_oficina
+WHERE p.codigo_cliente IS NULL;
+
+--6--
+SELECT c.codigo_cliente, c.nombre_cliente, o.codigo_oficina, o.linea_direccion1
+FROM cliente c
+INNER JOIN empleado e ON e.codigo_empleado = c.codigo_empleado_rep_ventas
+INNER JOIN oficina o ON o.codigo_oficina = e.codigo_oficina
+WHERE o.ciudad = "Fuenlabrada";
+
+--7--
+SELECT c.nombre_cliente, e.nombre AS nombre_representante, o.ciudad AS ciudad_oficina
+FROM cliente c
+INNER JOIN empleado e ON e.codigo_empleado = c.codigo_empleado_rep_ventas
+INNER JOIN oficina o ON o.codigo_oficina = e.codigo_oficina
+WHERE c.codigo_empleado_rep_ventas IS NOT NULL;
+
+--8--
+SELECT e.nombre AS nombre_empleado, e1.nombre AS nombre_jefe
+FROM empleado e
+INNER JOIN empleado e1 ON e.codigo_jefe = e1.codigo_empleado;
+
+--9--
+SELECT e.nombre AS nombre_empleado, e1.nombre AS nombre_jefe, e2.nombre AS nombre_jefe_del_jefe
+FROM empleado e
+INNER JOIN empleado e1 ON e.codigo_jefe = e1.codigo_empleado
+INNER JOIN empleado e2 ON e.codigo_jefe = e2.codigo_empleado;
+
+--10--
+SELECT c.nombre_cliente
+FROM cliente c, (
+    SELECT p.fecha_entrega, p.fecha_esperada
+    FROM pedido p
+    WHERE p.fecha_entrega > p.fecha_esperada
+)tiempo;
+
+--11--
+SELECT c.nombre_cliente, g.gama, g.descripcion_texto
+FROM detalle_pedido dp
+INNER JOIN pedido pe ON pe.codigo_pedido = dp.codigo_pedido
+INNER JOIN producto pr ON pr.codigo_producto = dp.codigo_producto
+INNER JOIN cliente c ON c.codigo_cliente = pe.codigo_cliente
+INNER JOIN gama_producto g ON g.gama = pr.gama; 
+
+-----CONSULTAS MULTITABLA 2------
+--1--
+SELECT c.codigo_cliente, c.nombre_cliente
+FROM cliente c
+LEFT JOIN pago p ON p.codigo_cliente = c.codigo_cliente
+WHERE p.codigo_cliente IS NULL; 
+
+--2--
+SELECT c.codigo_cliente, c.nombre_cliente
+FROM cliente c
+LEFT JOIN pago p ON p.codigo_cliente = c.codigo_cliente
+WHERE p.codigo_cliente IS NULL; 
+
+--3--
+SELECT c.codigo_cliente, c.nombre_cliente
+FROM cliente c
+LEFT JOIN pago pa ON pa.codigo_cliente = c.codigo_cliente
+LEFT JOIN pedido pe ON pe.codigo_cliente = c.codigo_cliente
+WHERE pa.codigo_cliente IS NULL OR pe.codigo_cliente IS NULL; 
+
+--4--
+SELECT e.codigo_empleado, e.nombre, e.apellido1, e.apellido2
+FROM empleado e
+RIGHT JOIN oficina o ON o.codigo_oficina = e.codigo_oficina
+WHERE e.codigo_oficina IS NULL; 
+
+--5--
+SELECT e.codigo_empleado, e.nombre, e.apellido1, e.apellido2
+FROM empleado e
+LEFT JOIN cliente c ON c.codigo_empleado_rep_ventas = e.codigo_empleado
+WHERE c.codigo_empleado_rep_ventas IS NULL; 
+
+--6--
+SELECT e.codigo_empleado, e.nombre, e.apellido1, e.apellido2, o.codigo_oficina, o.ciudad, o.pais, o.region, o.codigo_postal, o.linea_direccion1
+FROM empleado e
+LEFT JOIN cliente c ON c.codigo_empleado_rep_ventas = e.codigo_empleado
+INNER JOIN oficina o ON o.codigo_oficina = e.codigo_oficina
+WHERE c.codigo_empleado_rep_ventas IS NULL; 
+
+--7--
+SELECT e.codigo_empleado, e.nombre, e.apellido1, e.apellido2
+FROM empleado e
+RIGHT JOIN oficina o ON o.codigo_oficina = e.codigo_oficina
+LEFT JOIN cliente c ON c.codigo_empleado_rep_ventas = e.codigo_empleado
+WHERE e.codigo_oficina IS NULL OR c.codigo_empleado_rep_ventas IS NULL; 
+
+--8--
+SELECT p.codigo_producto, p.nombre
+FROM Producto p
+LEFT JOIN detalle_pedido dp ON p.codigo_producto = dp.codigo_producto
+WHERE dp.codigo_producto IS NULL;
+
+--9--
+SELECT p.codigo_producto, p.nombre, p.descripcion, g.imagen
+FROM Producto p
+LEFT JOIN detalle_pedido dp ON p.codigo_producto = dp.codigo_producto
+INNER JOIN gama_producto g ON g.gama = p.gama
+WHERE dp.codigo_producto IS NULL;
+
+--10--
 SELECT
-FROM cliente
+FROM empleado e
+
+----RESUMEN----
+
+--1--
+SELECT COUNT(*)
+FROM empleado;
+
+--2--
+SELECT c.ciudad, COUNT(*) AS numero_clientes
+FROM cliente c
+GROUP BY c.ciudad;
+
+--3--
+SELECT AVG(p.total)
+FROM pago p
+WHERE p.fecha_pago LIKE "%2009%";
+
+--4--
+SELECT p.estado, 
+FROM pedido p
+GROUP BY p.estado
+ORDER BY 
